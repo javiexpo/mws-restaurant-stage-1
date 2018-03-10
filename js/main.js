@@ -4,6 +4,31 @@ let restaurants,
 var map
 var markers = []
 
+let currentImgSize;
+/**
+ * Get the viewport width
+ */
+getViewportWidth = () => Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+
+
+/**
+ * Get to know when the viewport size has change
+ */
+window.onresize = () => {
+  let restaurantImgSize = 0;
+  if (getViewportWidth() < 400)
+    restaurantImgSize = 360;
+  else
+    restaurantImgSize = 800;
+
+    console.log('currentImgSize ', currentImgSize);
+    console.log('restaurantImgSize ', restaurantImgSize);
+  if (!currentImgSize ||  currentImgSize != restaurantImgSize) {
+    currentImgSize = restaurantImgSize;
+    updateRestaurants();
+  }
+};
+
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
@@ -140,7 +165,13 @@ createRestaurantHTML = (restaurant) => {
 
   const image = document.createElement('img');
   image.className = 'restaurant-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  let imgUrl = DBHelper.imageUrlForRestaurant(restaurant); 
+  let viewPortWidth = 360;
+  if (getViewportWidth() > 400) {
+    viewPortWidth = 800;
+  }
+  imgUrl = imgUrl.replace(`.jpg`, `-${viewPortWidth}.jpg`);
+  image.src = imgUrl;
   li.append(image);
 
   const name = document.createElement('h1');

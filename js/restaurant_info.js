@@ -21,6 +21,11 @@ window.initMap = () => {
 }
 
 /**
+ * Get the viewport width
+ */
+getViewportWidth = () => Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+
+/**
  * Get current restaurant from page URL.
  */
 fetchRestaurantFromURL = (callback) => {
@@ -57,7 +62,14 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  
+  let imgUrl = DBHelper.imageUrlForRestaurant(restaurant); 
+  let viewPortWidth = 360
+  if (getViewportWidth() > 400) {
+    viewPortWidth = 800
+  }
+  imgUrl = imgUrl.replace(`.jpg`, `-${viewPortWidth}.jpg`)
+  image.src = imgUrl;
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
