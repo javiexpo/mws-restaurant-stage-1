@@ -24,5 +24,8 @@ In a terminal, check the version of Python you have: `python -V`. If you have Py
 
 Most of the code in this project has been written to the ES6 JavaScript specification for compatibility with modern web browsers and future proofing JavaScript code. As much as possible, try to maintain use of ES6 in any additional JavaScript you write. 
 
+### Notes for My Reviewer
+
+I use grunt to serve diferent images sizes in relation with the viewport width, so before you run the start the `python -m SimpleHTTPServer 8000` comand you will need to run `grunt` command in order to create the `img/` directory with the different images files.
 
 
