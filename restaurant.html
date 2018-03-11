@@ -14,6 +14,7 @@
 <body class="inside">
   <!-- Beginning header -->
   <header>
+    <a href="#restaurant-container" class="skip-link-rest">Skip to Restaurant Details</a>
     <!-- Beginning nav -->
     <nav>
       <h1><a href="/">Restaurant Reviews</a></h1>
@@ -35,16 +36,16 @@
     </section>
     <!-- End map -->
     <!-- Beginning restaurant -->
-    <section id="restaurant-container">
-      <h1 id="restaurant-name"></h1>
-      <img id="restaurant-img">
-      <p id="restaurant-cuisine"></p>
-      <p id="restaurant-address"></p>
-      <table id="restaurant-hours"></table>
+    <section id="restaurant-container" arial-label="Restaurant Details" tabindex="-1">
+      <h1 id="restaurant-name" arial-label="Name"></h1>
+      <img id="restaurant-img" arial-label="Picture">
+      <p id="restaurant-cuisine" arial-label="Cuisine"></p>
+      <p id="restaurant-address" arial-label="Address"></p>
+      <table id="restaurant-hours" arial-label="Hours"></table>
     </section>
     <!-- end restaurant -->
     <!-- Beginning reviews -->
-    <section id="reviews-container">
+    <section id="reviews-container" tabindex="0">
       <ul id="reviews-list"></ul>
     </section>
     <!-- End reviews -->

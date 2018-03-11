@@ -218,7 +218,6 @@ nav h1 a {
 }
 
 @media screen and ( min-width: 768px) {
-
   nav h1 a {
     font-size: 1.3em;
   }
@@ -228,14 +227,14 @@ nav h1 a {
   }
 
   #restaurants-list p{
-    font-size: 2.5em;
+    font-size: 2em;
   }
 
   .filter-options h2 {
     font-size: 1.5em;
   }
   .filter-options select {
-    font-size: 1.5em;
+    font-size: 1.2em;
   }
 
   #footer {
@@ -243,7 +242,7 @@ nav h1 a {
   }  
 }
 
-@media screen and ( min-width: 1025px ) {
+@media screen and ( min-width: 1024px ) {
   body {
     max-width: 80%;
     margin-left: auto;
@@ -253,6 +252,15 @@ nav h1 a {
   #restaurants-list {
     grid-template-columns: 1fr 1fr;
   }
+
+  #restaurants-list li h1 {
+    font-size: 1.5em;
+  }
+
+  #restaurants-list p{
+    font-size: 1.2em;
+  }
+
 }
 /* ====================== Restaurant Details ====================== */
 body.inside {
@@ -384,15 +392,19 @@ body.inside {
   }
 
   #restaurant-address {
-    font-size: 0.8em;
+    font-size: 0.5em;
   }
 
   #restaurant-hours td {
-    font-size: 0.8em;
+    font-size: 0.5em;
+  }
+
+  #reviews-container h2 {
+    font-size: 1em;
   }
 
   #reviews-list li p {
-    font-size: 1em;
+    font-size: 0.8em;
   }
 
 }
@@ -401,4 +413,23 @@ body.inside {
   body.inside {
     max-width: 80%;
   }
+}
+
+
+.skip-link,
+.skip-link-rest {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #BF1722;
+  color: white;
+  padding: 8px;
+  z-index: 100;
+}
+
+.skip-link:focus{
+  top: 0;
+}
+.skip-link-rest:focus {
+  top: 0;
 }
