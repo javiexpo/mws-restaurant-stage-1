@@ -21,8 +21,6 @@ window.onresize = () => {
   else
     restaurantImgSize = 800;
 
-    console.log('currentImgSize ', currentImgSize);
-    console.log('restaurantImgSize ', restaurantImgSize);
   if (!currentImgSize ||  currentImgSize != restaurantImgSize) {
     currentImgSize = restaurantImgSize;
     updateRestaurants();
@@ -36,6 +34,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
 });
+
+/**
+ * Fetch all neighborhoods and set their HTML.
+ */
+
+ setiFrameRole = () => {
+  mapiFrame = document.getElementsByTagName('iframe');
+  mapiFrame.setAttribute('title','iFrame to render Google Maps');
+ }
+
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -58,6 +66,8 @@ fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
   const select = document.getElementById('neighborhoods-select');
   neighborhoods.forEach(neighborhood => {
     const option = document.createElement('option');
+    option.setAttribute('role','option');
+    //option.setAttribute('aria-label', neighborhood);
     option.innerHTML = neighborhood;
     option.value = neighborhood;
     select.append(option);
@@ -86,6 +96,8 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
 
   cuisines.forEach(cuisine => {
     const option = document.createElement('option');
+    option.setAttribute('role','option');
+    //option.setAttribute('aria-label', cuisine);
     option.innerHTML = cuisine;
     option.value = cuisine;
     select.append(option);
@@ -172,6 +184,7 @@ createRestaurantHTML = (restaurant) => {
   }
   imgUrl = imgUrl.replace(`.jpg`, `-${viewPortWidth}.jpg`);
   image.src = imgUrl;
+  image.alt = restaurant.alt;
   li.append(image);
 
   const name = document.createElement('h1');

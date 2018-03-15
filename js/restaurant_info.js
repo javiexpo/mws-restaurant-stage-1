@@ -62,6 +62,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
+  image.alt = restaurant.alt;
   
   let imgUrl = DBHelper.imageUrlForRestaurant(restaurant); 
   let viewPortWidth = 360
