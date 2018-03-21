@@ -5,6 +5,7 @@ var map
 var markers = []
 
 let currentImgSize;
+
 /**
  * Get the viewport width
  */
@@ -67,7 +68,7 @@ fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
   neighborhoods.forEach(neighborhood => {
     const option = document.createElement('option');
     option.setAttribute('role','option');
-    //option.setAttribute('aria-label', neighborhood);
+    option.setAttribute('aria-label', neighborhood);
     option.innerHTML = neighborhood;
     option.value = neighborhood;
     select.append(option);
@@ -97,7 +98,7 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
   cuisines.forEach(cuisine => {
     const option = document.createElement('option');
     option.setAttribute('role','option');
-    //option.setAttribute('aria-label', cuisine);
+    option.setAttribute('aria-label', cuisine);
     option.innerHTML = cuisine;
     option.value = cuisine;
     select.append(option);
