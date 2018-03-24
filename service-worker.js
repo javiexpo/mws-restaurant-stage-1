@@ -43,7 +43,6 @@ self.addEventListener('install', function(evt) {
 self.addEventListener('fetch', function(evt) {
     console.log('Handling fetch event for', evt.request.url);
     evt.respondWith(fromCache(evt.request));
-
     evt.waitUntil(update(evt.request));
 });
 
@@ -69,4 +68,3 @@ function update(request) {
       });
     });
 }
-

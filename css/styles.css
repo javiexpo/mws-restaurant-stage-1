@@ -357,24 +357,43 @@ body.inside {
   letter-spacing: -1px;
   padding-bottom: 1pt;
 }
+
 #reviews-list {
   margin: 0;
   padding: 0;
 }
+
 #reviews-list li {
   background-color: #fff;
   border: 2px solid #f3f3f3;
-  display: block;
+  /* display: block; */
   list-style-type: none;
   margin: 0 0 30px;
   overflow: hidden;
   padding: 0 20px 20px;
   position: relative;
   max-width: 100%;
+  border-radius: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
 }
 #reviews-list li p {
   margin: 0 0 10px;
   font-size: 1.5em;
+}
+
+.reviewListName {
+  grid-column: 1/2;
+}
+
+.reviewListDate {
+  grid-column: 2/3;
+  align-content:flex-end;
+}
+
+.reviewListRating, .reviewListReview {
+  grid-column: 1/3;
 }
 
 #restaurant-hours {

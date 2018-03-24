@@ -14,7 +14,7 @@
 <body class="inside">
   <!-- Beginning header -->
   <header>
-    <a href="#restaurant-container" class="skip-link-rest">Skip to Restaurant Details</a>
+    <a href="#restaurant-name" class="skip-link-rest">Skip to Restaurant Details</a>
     <!-- Beginning nav -->
     <nav>
       <h1><a href="/">Restaurant Reviews</a></h1>
@@ -31,21 +31,21 @@
   <!-- Beginning main -->
   <main id="maincontent">
     <!-- Beginning map -->
-    <section id="map-container">
-      <div id="map"></div>
+    <section id="map-container" role="application">
+      <div id="map" tabindex="-1"></div>
     </section>
     <!-- End map -->
     <!-- Beginning restaurant -->
-    <section id="restaurant-container" arial-label="Restaurant Details" tabindex="-1">
-      <h1 id="restaurant-name" arial-label="Name"></h1>
-      <img id="restaurant-img" arial-label="Picture">
-      <p id="restaurant-cuisine" arial-label="Cuisine"></p>
-      <p id="restaurant-address" arial-label="Address"></p>
-      <table id="restaurant-hours" arial-label="Hours"></table>
+    <section id="restaurant-container" arial-label="Restaurant Details" tabindex="0">
+      <h1 id="restaurant-name" arial-label="Name" tabindex="0"></h1>
+      <img id="restaurant-img" arial-label="Picture" tabindex="0">
+      <p id="restaurant-cuisine" arial-label="Cuisine" tabindex="0"></p>
+      <p id="restaurant-address" arial-label="Address" tabindex="0"></p>
+      <table id="restaurant-hours" role="table" arial-label="Open at" tabindex="0"></table>
     </section>
     <!-- end restaurant -->
     <!-- Beginning reviews -->
-    <section id="reviews-container" tabindex="0">
+    <section id="reviews-container" tabindex="-1">
       <ul id="reviews-list"></ul>
     </section>
     <!-- End reviews -->
@@ -54,7 +54,7 @@
 
   <!-- Beginning footer -->
   <footer id="footer">
-    Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
+    Copyright (c) 2017 <a href="/" aria-label="go to home of Restaurant Reviews site"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
   <!-- End footer -->
 

@@ -36,15 +36,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchCuisines();
 });
 
-/**
- * Fetch all neighborhoods and set their HTML.
- */
-
- setiFrameRole = () => {
-  mapiFrame = document.getElementsByTagName('iframe');
-  mapiFrame.setAttribute('title','iFrame to render Google Maps');
- }
-
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -175,6 +166,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
  */
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
+  li.setAttribute('tabindex', 0);
 
   const image = document.createElement('img');
   image.className = 'restaurant-img';

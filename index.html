@@ -20,20 +20,25 @@
   </header>
 
   <main id="maincontent">
-    <section id="map-container">
-      <div id="map"></div>
+    <section id="map-container" role="application">
+      <div id="map" tabindex="-1"></div>
     </section>
     <section id="filter-restaurants" tabindex="-1">
-      <div class="filter-options" role="group" aria-label="Filter restaurants by Neighborhoods and Cuisines">
-        <h2 role="heading">Filter Results</h2>
-        <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" role="listbox" aria-label="Select neighborhoods">
-          <option value="all" role="option" aria-label="All Neighborhoods">All Neighborhoods</option>
+      <div class="filter-options" role="group" aria-label="Filter restaurants by Neighborhoods and Cuisines" tabindex="0">
+        <h2>Filter Results</h2>
+        <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" 
+          role="listbox" aria-label="Select neighborhoods" aria-owns="neighborhoods-options">
+          <div id="neighborhoods-options">
+            <option value="all" role="option" aria-label="All Neighborhoods">All Neighborhoods</option>
+          </div>
         </select>
-        <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()" role="listbox" aria-label="Select Cuisines">
-          <option value="all" role="option">All Cuisines</option>
+        <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()" role="listbox" aria-label="Select Cuisines" aria-owns="cuisines-options">
+          <div id="cuisines-options">
+            <option value="all" role="option">All Cuisines</option>
+          </div>
         </select>
       </div>
-      <ul id="restaurants-list"></ul>
+      <ul id="restaurants-list" tabindex="-1"></ul>
     </section>
   </main>
 
