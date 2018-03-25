@@ -1,12 +1,11 @@
 var CACHE_VERSION = 1;
 
 // Shorthand identifier mapped to specific versioned cache.
-var CURRENT_CACHES = {
-  font: 'cache-resources-v' + CACHE_VERSION
-};
+var CURRENT_CACHES = `cache-resources-v${CACHE_VERSION}`;
 
 const resourcesList = [
-    './', 
+    './',
+    './index.html', 
     './js/main.js',
     './js/dbhelper.js',
     './js/restaurant_info.js',
@@ -44,6 +43,24 @@ self.addEventListener('fetch', function(evt) {
     console.log('Handling fetch event for', evt.request.url);
     evt.respondWith(fromCache(evt.request));
     evt.waitUntil(update(evt.request));
+});
+
+self.addEventListener('activate', function(event) {
+  console.log('Activating new service worker...');
+
+  var cacheWhitelist = [CURRENT_CACHES];
+
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });
 
 function precache() {

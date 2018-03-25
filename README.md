@@ -1,31 +1,30 @@
 # Mobile Web Specialist Certification Course
 ---
-#### _Three Stage Course Material Project - Restaurant Reviews_
+## _Restaurant Reviews_
 
-## Project Overview: Stage 1
+### Project Overview:
 
-For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application. In **Stage One**, you will take a static design that lacks accessibility and convert the design to be responsive on different sized displays and accessible for screen reader use. You will also add a service worker to begin the process of creating a seamless offline experience for your users.
+The **Restaurant Reviews** project, is a mobile-ready web application, that allow the user look for a restaurant nearby; you can filter restaurants by Neighborhoods and Cuisines and also locate the restaurants in a google maps.
+
+After you find your choice, you can navigate to the details of a restaurant, where you can find more information like Opening hours, ratings and reviews.
 
 ### Specification
 
-You have been provided the code for a restaurant reviews website. The code has a lot of issues. It’s barely usable on a desktop browser, much less a mobile device. It also doesn’t include any standard accessibility features, and it doesn’t work offline at all. Your job is to update the code to resolve these issues while still maintaining the included functionality. 
+This mobile-ready web application implement the following features:
 
-### What do I do from here?
+* **Resposive Design** so it works and the look & feel is nice in all kind of devices.
+* **Service Worker** and **Cache API** in order to provde offline capabilities for the pages that the user had visited
+* Implement a **focus** strategy to provide easy navigation for no mouse user.
+* **ARIA** and **Sematics** specification in order to provdide the correct information for tools like ChromeVox and help people with some disabilities.
+* Most of the code in this project has been written to the ES6 JavaScript specification for compatibility with modern web browsers and future proofing JavaScript code. 
 
-1. In this folder, start up a simple HTTP server to serve up the site files on your local computer. Python has some simple tools to do this, and you don't even need to know Python. For most people, it's already installed on your computer. 
+### Technical Notes
 
-In a terminal, check the version of Python you have: `python -V`. If you have Python 2.x, spin up the server with `python -m SimpleHTTPServer 8000` (or some other port, if port 8000 is already in use.) For Python 3.x, you can use `python3 -m http.server 8000`. If you don't have Python installed, navigate to Python's [website](https://www.python.org/) to download and install the software.
-
-2. With your server running, visit the site: `http://localhost:8000`, and look around for a bit to see what the current experience looks like.
-3. Explore the provided code, and make start making a plan to implement the required features in three areas: responsive design, accessibility and offline use.
-4. Write code to implement the updates to get this site on its way to being a mobile-ready website.
-
-### Note about ES6
-
-Most of the code in this project has been written to the ES6 JavaScript specification for compatibility with modern web browsers and future proofing JavaScript code. As much as possible, try to maintain use of ES6 in any additional JavaScript you write. 
-
-### Notes for My Reviewer
-
-I use grunt to serve diferent images sizes in relation with the viewport width, so before you run the start the `python -m SimpleHTTPServer 8000` comand you will need to run `grunt` command in order to create the `img/` directory with the different images files.
+* You can serve this mobile-ready web app using the SimpleHTTPServer module from pyhton with the following command:`python -m SimpleHTTPServer 8000`.
+* I use grunt to serve diferent images sizes in relation with the viewport width. The command task is defined in the Grintfile.js and can be executed the command `grunt`. This command execute the defaul task that include the following sequences of task:
+>> 1. `grunt clean`: delete the `img/` directory and all the files inside of it.
+>> 2. `grunt mkdir`: create a directory called `img/` at the root directory of the of this project.
+>> 3. `grunt copy`: copy the original image files from `images/` directory to the new one created directory `img/`.
+>> 4. `grunt responsive_images`: procees all the images into a specific size and compresion level using ImageMagik.
 
 

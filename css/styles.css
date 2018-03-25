@@ -189,7 +189,7 @@ nav h1 a {
   max-width: 100%;
 }
 
-#restaurants-list li h1 {
+#restaurants-list li h3 {
   color: var(--detail-btn-color);
   font-family: Arial,sans-serif;
   font-size: 1.8em;
@@ -228,8 +228,16 @@ nav h1 a {
     font-size: 1.3em;
   }
 
-  #restaurants-list li h1 {
-    font-size: 3em;
+  #restaurants-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #restaurants-list .restaurant-img {
+    min-height: 200px;
+  }
+
+  #restaurants-list li h3 {
+    font-size: 2em;
   }
 
   #restaurants-list p{
@@ -239,6 +247,7 @@ nav h1 a {
   .filter-options h2 {
     font-size: 1.5em;
   }
+  
   .filter-options select {
     font-size: 1.2em;
   }
@@ -256,15 +265,26 @@ nav h1 a {
   }
 
   #restaurants-list {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
-  #restaurants-list li h1 {
+  #restaurants-list li {
+    padding: 10px 4px 4px;
+    margin: 10px;
+    min-height: 350px;
+    max-width: 800px;
+  }
+
+  #restaurants-list li h3 {
     font-size: 1.5em;
   }
 
   #restaurants-list p{
     font-size: 1.2em;
+  }
+
+  #restaurants-list li a {
+    font-size: 8pt;
   }
 
 }
@@ -350,7 +370,7 @@ body.inside {
   padding: 30px 40px 80px;
 }
 
-#reviews-container h2 {
+#reviews-container h4 {
   color:  var(--detail-btn-color);
   font-size: 1.5em;
   font-weight: 300;

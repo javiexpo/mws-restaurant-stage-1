@@ -64,8 +64,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
-  image.alt = restaurant.alt;
-  image.setAttribute('aria-label', restaurant.alt);
+  image.alt = `Photo of ${restaurant.name} Restaurant`;
+  image.setAttribute('aria-label', restaurant.name);
   
   let imgUrl = DBHelper.imageUrlForRestaurant(restaurant); 
   let viewPortWidth = 360
@@ -114,7 +114,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
+  const title = document.createElement('h4');
   title.innerHTML = 'Reviews';
   title.setAttribute('tabindex', 0);
   container.appendChild(title);
@@ -171,6 +171,7 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;
+  li.setAttribute('aria-current', 'page');
   breadcrumb.appendChild(li);
 }
 

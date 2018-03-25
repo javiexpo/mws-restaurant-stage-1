@@ -20,7 +20,7 @@
       <h1><a href="/">Restaurant Reviews</a></h1>
     </nav>
     <!-- Beginning breadcrumb -->
-    <ul id="breadcrumb" >
+    <ul id="breadcrumb" role="navigation" aria-label="Breadcrumb">
       <li><a href="/">Home</a></li>
     </ul>
     <!-- End breadcrumb -->
@@ -29,15 +29,15 @@
   <!-- End header -->
 
   <!-- Beginning main -->
-  <main id="maincontent">
+  <main id="maincontent" role="main">
     <!-- Beginning map -->
-    <section id="map-container" role="application">
-      <div id="map" tabindex="-1"></div>
+    <section id="map-container">
+      <div id="map" role="application" tabindex="-1"></div>
     </section>
     <!-- End map -->
     <!-- Beginning restaurant -->
     <section id="restaurant-container" arial-label="Restaurant Details" tabindex="0">
-      <h1 id="restaurant-name" arial-label="Name" tabindex="0"></h1>
+      <h2 id="restaurant-name" arial-label="Name" tabindex="0"></h2>
       <img id="restaurant-img" arial-label="Picture" tabindex="0">
       <p id="restaurant-cuisine" arial-label="Cuisine" tabindex="0"></p>
       <p id="restaurant-address" arial-label="Address" tabindex="0"></p>
@@ -66,6 +66,23 @@
   <!-- Google Maps -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsyKYFOJ4YZvsrSRHNfTt_ADm3U6KNe14&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
+
+  <script>
+    /**
+     * Register Service Worker
+     */
+    if ('serviceWorker' in navigator) {
+      // Register a service worker hosted at the root of the
+      // site using the default scope.
+      navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+        console.log('Service worker registration succeeded:', registration);
+      }).catch(function (error) {
+        console.log('Service worker registration failed:', error);
+      });
+    } else {
+      console.log('Service workers are not supported.');
+    }
+  </script>
 
 </body>
 
