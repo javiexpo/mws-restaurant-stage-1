@@ -177,7 +177,7 @@ createRestaurantHTML = (restaurant) => {
   }
   imgUrl = imgUrl.replace(`.jpg`, `-${viewPortWidth}.jpg`);
   image.src = imgUrl;
-  image.alt = `Photo of ${restaurant.name} Restaurant`;
+  image.alt = `Image of ${restaurant.name} Restaurant`;
   li.append(image);
 
   const name = document.createElement('h3');

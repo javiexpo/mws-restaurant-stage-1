@@ -91,38 +91,66 @@ nav h1 a {
   max-height: 100%;
 }
 
-#breadcrumb {
+/* #breadcrumb {
     padding: 10px 40px 16px;
     list-style: none;
     background-color: #eee;
     font-size: 17px;
     margin: 0;
     max-width: 100%;
+} */
+
+.breadcrumb {
+  padding: 5px 40px 8px;
+  list-style: none;
+  background-color: #eee;
+  font-size: 17px;
+  margin: 0;
+  max-width: 100%;
+  border: 1px solid hsl(0, 0%, 90%);
+  border-radius: 4px;
+  text-align: left;
 }
 
 /* Display list items side by side */
-#breadcrumb li {
-    display: inline;
+.breadcrumb li {
+    display: inline-block;
 }
 
 /* Add a slash symbol (/) before/behind each list item */
-#breadcrumb li+li:before {
-    padding: 8px;
-    color: black;
-    content: "/\00a0";
+.breadcrumb li + li::before {
+  display: inline-block;
+  margin: 0 .25em;
+  transform: rotate(15deg);
+  border-right: .1em solid currentColor;
+  height: .8em;
+  content: '';
+}
+
+/* .breadcrumb li + li::before {
+  padding: 8px;
+  color: black;
+  content: "/\00a0";
+} */
+
+.breadcrumb [aria-current="page"] {
+  color:#000;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 /* Add a color to all links inside the list */
-#breadcrumb li a {
-    color: #0275d8;
+.breadcrumb li a {
+    color: var(--detail-btn-color);
     text-decoration: none;
 }
 
 /* Add a color on mouse-over */
-#breadcrumb li a:hover {
-    color: #01447e;
+.breadcrumb li a:hover {
+    color:white;
     text-decoration: underline;
 }
+
 /* ====================== Map ====================== */
 #map {
   height: 400px;
