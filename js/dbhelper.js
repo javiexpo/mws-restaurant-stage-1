@@ -12,11 +12,29 @@ class DBHelper {
     return `http://localhost:${port}/data/restaurants.json`;
   }
 
+  static get REMOTE_SERVER_URL() {
+    const port = 1337 // Change this to your server port
+    return `http://localhost:${port}/restaurants`;
+  }
+
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
+    fetch(DBHelper.DATABASE_URL).then(function(response) {
+      if(response.ok) {
+        return response.json();
+      } else {
+        callback('Restaurants not found', null);
+      }
+    }).then(function(restaurants) {
+      callback(null, restaurants);
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      callback(error.message, null);
+    });
+
+    /*let xhr = new XMLHttpRequest();
     xhr.open('GET', DBHelper.DATABASE_URL);
     xhr.onload = () => {
       if (xhr.status === 200) { // Got a success response from server!
@@ -28,15 +46,28 @@ class DBHelper {
         callback(error, null);
       }
     };
-    xhr.send();
+    xhr.send();*/
   }
 
   /**
    * Fetch a restaurant by its ID.
    */
   static fetchRestaurantById(id, callback) {
+    // fetch restaurant by Id from remote server
+    fetch(`${DBHelper.DATABASE_URL}/${id}`).then(function(response) {
+      if(response.ok) {
+        return response.json();
+      } else {
+        callback('Restaurant does not exist', null);
+      }
+    }).then(function(restaurant) {
+      callback(null, restaurant);
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      callback('Sorry there has been a problem, please try again later', null);
+    });
     // fetch all restaurants with proper error handling.
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    /*DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -47,7 +78,7 @@ class DBHelper {
           callback('Restaurant does not exist', null);
         }
       }
-    });
+    });*/
   }
 
   /**

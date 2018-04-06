@@ -3,6 +3,7 @@
 :root {
   --main-bg-color: #0D5B91;
   --detail-btn-color: orange;
+  --rest-title-color: black;
 }
 
 /* CSS Document */
@@ -218,7 +219,7 @@ nav h1 a {
 }
 
 #restaurants-list li h3 {
-  color: var(--detail-btn-color);
+  color: var(--rest-title-color);
   font-family: Arial,sans-serif;
   font-size: 1.8em;
   font-weight: 200;
@@ -235,7 +236,8 @@ nav h1 a {
 #restaurants-list li a {
   background-color: orange;
   border-bottom: 3px solid #eee;
-  color: #fff;
+  /* color: #fff; */
+  color: black;
   display: inline-block;
   font-size: 10pt;
   margin: 15px 0 0;
