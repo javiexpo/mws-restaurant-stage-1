@@ -72,7 +72,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (getViewportWidth() > 400) {
     viewPortWidth = 800
   }
-  imgUrl = imgUrl.replace(`.jpg`, `-${viewPortWidth}.jpg`)
+  //imgUrl = imgUrl.replace(`.jpg`, `-${viewPortWidth}.jpg`)
+  imgUrl = imgUrl.concat(`-${viewPortWidth}.jpg`);
   image.src = imgUrl;
 
   const cuisine = document.getElementById('restaurant-cuisine');

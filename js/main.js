@@ -175,7 +175,8 @@ createRestaurantHTML = (restaurant) => {
   if (getViewportWidth() > 400) {
     viewPortWidth = 800;
   }
-  imgUrl = imgUrl.replace(`.jpg`, `-${viewPortWidth}.jpg`);
+  //imgUrl = imgUrl.replace(`.jpg`, `-${viewPortWidth}.jpg`);
+  imgUrl = imgUrl.concat(`-${viewPortWidth}.jpg`);
   image.src = imgUrl;
   image.alt = `Image of ${restaurant.name} Restaurant`;
   li.append(image);

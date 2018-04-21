@@ -17,22 +17,38 @@ class DBHelper {
     return `http://localhost:${port}/restaurants`;
   }
 
+  static get IDB_DATABASE_VERSION() { return 1; }
+  static get IDB_DATABASE_NAME() { return 'rest-info-db'; }
+  static get IDB_STORE_NAME() { return 'rest-info'; }
+  
+  static get IDB_PROMISE() {
+    //Constructor and Getter for the IndexDB promise
+    return idb.open(DBHelper.IDB_DATABASE_NAME,DBHelper.IDB_DATABASE_VERSION,function(upgradeDb){
+      let store = upgradeDb.createObjectStore(DBHelper.IDB_STORE_NAME, {
+        keyPath: 'id'
+      });
+      store.createIndex('by-name', 'name');
+    });
+  }
+
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    fetch(DBHelper.DATABASE_URL).then(function(response) {
+    DBHelper.fetchRestaurantsFromIDB(callback);
+    /* fetch(DBHelper.REMOTE_SERVER_URL).then(function(response) {
       if(response.ok) {
         return response.json();
       } else {
         callback('Restaurants not found', null);
       }
     }).then(function(restaurants) {
+      DBHelper.saveRestaurantsInIDB(restaurants);
       callback(null, restaurants);
     }).catch(function(error) {
       console.log('There has been a problem with your fetch operation: ' + error.message);
       callback(error.message, null);
-    });
+    }); */
 
     /*let xhr = new XMLHttpRequest();
     xhr.open('GET', DBHelper.DATABASE_URL);
@@ -49,23 +65,53 @@ class DBHelper {
     xhr.send();*/
   }
 
+  static saveRestaurantsInIDB(restaurants) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let tx = db.transaction(DBHelper.IDB_STORE_NAME,'readwrite');
+      let store = tx.objectStore(DBHelper.IDB_STORE_NAME);
+      restaurants.forEach(function(rest){
+        store.put(rest);
+      });
+    });
+  }
+
+  static fetchRestaurantsFromIDB(callback) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let indexStore = db.transaction(DBHelper.IDB_STORE_NAME)
+                          .objectStore(DBHelper.IDB_STORE_NAME)
+                          .index('by-name');
+      indexStore.getAll().then(function(restaurants){
+        if(restaurants && restaurants.length > 0)
+          callback(null, restaurants);
+        else
+          DBHelper.fetchRestaurantsFromServer(callback);
+      });
+    });
+  }
+
+  static fetchRestaurantsFromServer(callback) {
+    fetch(DBHelper.REMOTE_SERVER_URL).then(function(response) {
+      if(response.ok) {
+        return response.json();
+      } else {
+        callback('Restaurants not found', null);
+      }
+    }).then(function(restaurants) {
+      DBHelper.saveRestaurantsInIDB(restaurants);
+      callback(null, restaurants);
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      callback(error.message, null);
+    });
+  }
+
   /**
    * Fetch a restaurant by its ID.
    */
   static fetchRestaurantById(id, callback) {
-    // fetch restaurant by Id from remote server
-    fetch(`${DBHelper.DATABASE_URL}/${id}`).then(function(response) {
-      if(response.ok) {
-        return response.json();
-      } else {
-        callback('Restaurant does not exist', null);
-      }
-    }).then(function(restaurant) {
-      callback(null, restaurant);
-    }).catch(function(error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
-      callback('Sorry there has been a problem, please try again later', null);
-    });
+    // fetch restaurant by Id from IndexDb if is not then fetch from remote server
+    DBHelper.fetchRestaurantsByIDFromIDB(id, callback);
+    
     // fetch all restaurants with proper error handling.
     /*DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
@@ -79,6 +125,43 @@ class DBHelper {
         }
       }
     });*/
+  }
+
+  static fetchRestaurantsByIDFromIDB(id, callback) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let store = db.transaction(DBHelper.IDB_STORE_NAME)
+                          .objectStore(DBHelper.IDB_STORE_NAME);
+      store.getAll().then(function(restaurants){
+        if(restaurants && restaurants.length > 0) {
+          let restaurant;
+          restaurants.forEach(function(rest){
+            if (rest.id == id)
+              restaurant = rest;
+          })
+          if(restaurant)
+            callback(null, restaurant);
+          else
+            DBHelper.fetchRestaurantsByIDFromServer(id,callback);  
+        } else {
+          DBHelper.fetchRestaurantsByIDFromServer(id,callback);
+        }
+      });
+    });
+  }
+
+  static fetchRestaurantsByIDFromServer(id, callback) {
+    fetch(`${DBHelper.REMOTE_SERVER_URL}/${id}`).then(function(response) {
+      if(response.ok) {
+        return response.json();
+      } else {
+        callback('Restaurant does not exist', null);
+      }
+    }).then(function(restaurant) {
+      callback(null, restaurant);
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      callback('Sorry there has been a problem, please try again later', null);
+    });
   }
 
   /**

@@ -35,21 +35,16 @@ const resourcesList = [
 ];
 
 self.addEventListener('install', function(evt) {
-    console.log('Service worker is beign installed!');
     evt.waitUntil(precache());
 });
 
 self.addEventListener('fetch', function(evt) {
-    console.log('Handling fetch event for', evt.request.url);
     evt.respondWith(fromCache(evt.request));
     evt.waitUntil(update(evt.request));
 });
 
 self.addEventListener('activate', function(event) {
-  console.log('Activating new service worker...');
-
   var cacheWhitelist = [CURRENT_CACHES];
-
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(
