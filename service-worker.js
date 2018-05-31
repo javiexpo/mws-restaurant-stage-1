@@ -11,6 +11,7 @@ const resourcesList = [
     './js/restaurant_info.js',
     './data/restaurants.json',
     './css/styles.css',
+    './css/fontawesome.min.css',
     './restaurant.html',
     './img/1-360.jpg',
     './img/2-360.jpg',

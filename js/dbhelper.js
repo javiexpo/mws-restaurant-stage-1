@@ -12,22 +12,31 @@ class DBHelper {
     return `http://localhost:${port}/data/restaurants.json`;
   }
 
-  static get REMOTE_SERVER_URL() {
+  static get REMOTE_RESTAURANTS_URL() {
     const port = 1337 // Change this to your server port
     return `http://localhost:${port}/restaurants`;
   }
 
-  static get IDB_DATABASE_VERSION() { return 1; }
+  static get REMOTE_REVIEWS_URL() {
+    const port = 1337 // Change this to your server port
+    return `http://localhost:${port}/reviews`;
+  }
+
+  static get IDB_DATABASE_VERSION() { return 2; }
   static get IDB_DATABASE_NAME() { return 'rest-info-db'; }
-  static get IDB_STORE_NAME() { return 'rest-info'; }
+  static get IDB_STORE_REST_INFO() { return 'rest-info'; }
+  static get IDB_STORE_REST_REVIEW() { return 'rest-review'; }
   
   static get IDB_PROMISE() {
     //Constructor and Getter for the IndexDB promise
     return idb.open(DBHelper.IDB_DATABASE_NAME,DBHelper.IDB_DATABASE_VERSION,function(upgradeDb){
-      let store = upgradeDb.createObjectStore(DBHelper.IDB_STORE_NAME, {
+      let storeRestInfo = upgradeDb.createObjectStore(DBHelper.IDB_STORE_REST_INFO, {
         keyPath: 'id'
       });
-      store.createIndex('by-name', 'name');
+      storeRestInfo.createIndex('by-name', 'name');
+      let storeRestReview = upgradeDb.createObjectStore(DBHelper.IDB_STORE_REST_REVIEW, {
+        keyPath: 'id'
+      });
     });
   }
 
@@ -36,7 +45,7 @@ class DBHelper {
    */
   static fetchRestaurants(callback) {
     DBHelper.fetchRestaurantsFromIDB(callback);
-    /* fetch(DBHelper.REMOTE_SERVER_URL).then(function(response) {
+    /* fetch(DBHelper.REMOTE_RESTAURANTS_URL).then(function(response) {
       if(response.ok) {
         return response.json();
       } else {
@@ -67,8 +76,8 @@ class DBHelper {
 
   static saveRestaurantsInIDB(restaurants) {
     DBHelper.IDB_PROMISE.then(function(db){
-      let tx = db.transaction(DBHelper.IDB_STORE_NAME,'readwrite');
-      let store = tx.objectStore(DBHelper.IDB_STORE_NAME);
+      let tx = db.transaction(DBHelper.IDB_STORE_REST_INFO,'readwrite');
+      let store = tx.objectStore(DBHelper.IDB_STORE_REST_INFO);
       restaurants.forEach(function(rest){
         store.put(rest);
       });
@@ -77,8 +86,8 @@ class DBHelper {
 
   static fetchRestaurantsFromIDB(callback) {
     DBHelper.IDB_PROMISE.then(function(db){
-      let indexStore = db.transaction(DBHelper.IDB_STORE_NAME)
-                          .objectStore(DBHelper.IDB_STORE_NAME)
+      let indexStore = db.transaction(DBHelper.IDB_STORE_REST_INFO)
+                          .objectStore(DBHelper.IDB_STORE_REST_INFO)
                           .index('by-name');
       indexStore.getAll().then(function(restaurants){
         if(restaurants && restaurants.length > 0)
@@ -90,7 +99,7 @@ class DBHelper {
   }
 
   static fetchRestaurantsFromServer(callback) {
-    fetch(DBHelper.REMOTE_SERVER_URL).then(function(response) {
+    fetch(DBHelper.REMOTE_RESTAURANTS_URL).then(function(response) {
       if(response.ok) {
         return response.json();
       } else {
@@ -129,8 +138,8 @@ class DBHelper {
 
   static fetchRestaurantsByIDFromIDB(id, callback) {
     DBHelper.IDB_PROMISE.then(function(db){
-      let store = db.transaction(DBHelper.IDB_STORE_NAME)
-                          .objectStore(DBHelper.IDB_STORE_NAME);
+      let store = db.transaction(DBHelper.IDB_STORE_REST_INFO)
+                          .objectStore(DBHelper.IDB_STORE_REST_INFO);
       store.getAll().then(function(restaurants){
         if(restaurants && restaurants.length > 0) {
           let restaurant;
@@ -150,7 +159,7 @@ class DBHelper {
   }
 
   static fetchRestaurantsByIDFromServer(id, callback) {
-    fetch(`${DBHelper.REMOTE_SERVER_URL}/${id}`).then(function(response) {
+    fetch(`${DBHelper.REMOTE_RESTAURANTS_URL}/${id}`).then(function(response) {
       if(response.ok) {
         return response.json();
       } else {
@@ -268,6 +277,13 @@ class DBHelper {
   }
 
   /**
+   * Favorite Restaurant URL.
+   */
+  static urlForFavoriteRestaurant(restaurant) {
+    return (`./restaurant.html?id=${restaurant.id}`);
+  }
+
+  /**
    * Map marker for a restaurant.
    */
   static mapMarkerForRestaurant(restaurant, map) {
@@ -279,6 +295,59 @@ class DBHelper {
       animation: google.maps.Animation.DROP}
     );
     return marker;
+  }
+
+  static fetchRestaurantReviewsById(id, callback) {
+    // fetch restaurant by Id from IndexDb if is not then fetch from remote server
+    DBHelper.fetchRestaurantReviewsByIDFromIDB(id, callback);
+  }
+
+  static fetchRestaurantReviewsByIDFromIDB(id, callback) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let store = db.transaction(DBHelper.IDB_STORE_REST_REVIEW)
+                          .objectStore(DBHelper.IDB_STORE_REST_REVIEW);
+      store.getAll().then(function(reviews){
+        if(reviews && reviews.length > 0) {
+          let restReviews = [];
+          reviews.forEach(function(rev){
+            if (rev.restaurant_id == id)
+              restReviews.push(rev);
+          })
+          if(restReviews.length > 0)
+            callback(null, restReviews);
+          else
+            DBHelper.fetchRestaurantReviewsByIDFromServer(id,callback);  
+        } else {
+          DBHelper.fetchRestaurantReviewsByIDFromServer(id,callback);
+        }
+      });
+    });
+  }
+
+  static fetchRestaurantReviewsByIDFromServer(id, callback) {
+    fetch(`${DBHelper.REMOTE_REVIEWS_URL}/?restaurant_id=${id}`).then(function(response) {
+      if(response.ok) {
+        return response.json();
+      } else {
+        callback('No reviews yet!', null);
+      }
+    }).then(function(restaurantReviews) {
+      DBHelper.saveRestaurantReviewsInIDB(restaurantReviews);
+      callback(null, restaurantReviews);
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      callback('Sorry there has been a problem, please try again later', null);
+    });
+  }
+
+  static saveRestaurantReviewsInIDB(restaurantReviews) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let tx = db.transaction(DBHelper.IDB_STORE_REST_REVIEW,'readwrite');
+      let store = tx.objectStore(DBHelper.IDB_STORE_REST_REVIEW);
+      restaurantReviews.forEach(function(review){
+        store.put(review);
+      });
+    });
   }
 
 }

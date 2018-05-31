@@ -247,6 +247,15 @@ nav h1 a {
   text-transform: uppercase;
 }
 
+#restaurants-list li .favorite {
+  font-size:3em; 
+  display: block;
+  padding-left: 80%;
+  width: 48px;
+  height: 48px;
+  color: var(--detail-btn-color);
+}
+
 @media screen and (min-width: 400px ){
   #restaurants-list .restaurant-img {
     min-height: 248px;
@@ -316,8 +325,11 @@ nav h1 a {
   #restaurants-list li a {
     font-size: 8pt;
   }
-
 }
+
+
+
+
 /* ====================== Restaurant Details ====================== */
 body.inside {
   max-width: 100%;

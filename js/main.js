@@ -6,6 +6,9 @@ var markers = []
 
 let currentImgSize;
 
+const FAVORITE_ON = 'Marked as Favorite';
+const FAVORITE_OFF = 'No marked as Favorite';
+
 /**
  * Get the viewport width
  */
@@ -196,9 +199,48 @@ createRestaurantHTML = (restaurant) => {
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more)
+  li.append(more);
 
-  return li
+  const favorite = createFavoriteIconHtml(restaurant);
+  li.append(favorite);
+
+  return li;
+}
+
+/**
+ * Create Favorite HTML Icon
+ */
+createFavoriteIconHtml = (rest) => {
+  const favoriteDiv = document.createElement('div');
+  favoriteDiv.setAttribute('class', 'favorite');
+
+  const favorite =document.createElement('i');
+  favorite.setAttribute('aria-hidden', 'true');
+  favorite.setAttribute('tabindex', '0');
+  if (rest.is_favorite) {
+    favorite.setAttribute('class', 'fas fa-star');
+    favorite.setAttribute('aria-label', FAVORITE_ON);  
+  } else {
+    favorite.setAttribute('class', 'far fa-star');
+    favorite.setAttribute('aria-label', FAVORITE_OFF);
+  }
+  favorite.setAttribute('rest-id', rest.id);
+  
+  favoriteDiv.appendChild(favorite);
+  favoriteDiv.addEventListener('click', toggleFavoriteRestaurant);
+  return favoriteDiv;
+}
+
+toggleFavoriteRestaurant = (event) => {
+  console.log('toggleFavoriteRestaurant', event);
+  console.log('toggleFavoriteRestaurant', event.target);
+  if (event.srcElement.className == 'fas fa-star') {
+    event.srcElement.setAttribute('class', 'far fa-star');
+    event.srcElement.setAttribute('aria-label', FAVORITE_OFF);
+  } else {
+    event.srcElement.setAttribute('class', 'fas fa-star');
+    event.srcElement.setAttribute('aria-label', FAVORITE_ON);
+  }
 }
 
 /**
