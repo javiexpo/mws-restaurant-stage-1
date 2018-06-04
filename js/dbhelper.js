@@ -173,6 +173,34 @@ class DBHelper {
     });
   }
 
+
+  static toggleRestaurantFavoriteById(id, callback) {
+    // fetch restaurant by Id from IndexDb if is not then fetch from remote server
+    DBHelper.fetchRestaurantsByIDFromIDB(id, (error, restaurant) => {
+      if (!restaurant) {
+        console.error(error);
+        callback(error, null);
+        return;
+      }
+
+      if (restaurant.is_favorite) {
+        restaurant.is_favorite = false;
+      } else {
+        restaurant.is_favorite = true;
+      }
+
+      DBHelper.IDB_PROMISE.then(function(db){
+        let tx = db.transaction(DBHelper.IDB_STORE_REST_INFO,'readwrite');
+        let store = tx.objectStore(DBHelper.IDB_STORE_REST_INFO);
+        store.put(restaurant);
+        callback(null, restaurant);
+        return tx.complete; 
+      }).then(function(restaurant){
+          console.log('toggleRestaurantFavoriteById');
+      });
+    });
+  }
+
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
    */
