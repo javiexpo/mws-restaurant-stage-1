@@ -48,7 +48,16 @@
     <!-- end restaurant -->
     <!-- Beginning reviews -->
     <section id="reviews-container" tabindex="-1">
-      <ul id="reviews-list"></ul>
+        <ul id="reviews-list"></ul>
+        <form action="" method="post">
+          <label for="Name"> Name: </label>
+          <input type="text" name="Name" id="userName" placeholder="John Smith"><br>
+          <label for="Rating"> Rating: </label>
+          <input type="text" name="Rating" id="userRating" placeholder="I enjoy a lot the food on this restaurant."><br>
+          <label for="Comment">Comments:</label>
+          <input type="text" name="Comment" id="userComments" placeholder="I enjoy a lot the food on this restaurant."><br>
+          <input type="submit" value="Submit"/>
+        </form>
     </section>
     <!-- End reviews -->
   </main>
@@ -71,14 +80,38 @@
   <!-- End scripts -->
 
   <script>
+    function logState(state) {
+      console.log(state);
+    }
     /**
      * Register Service Worker
      */
-    if ('serviceWorker' in navigator) {
+     if ('serviceWorker' in navigator) {
       // Register a service worker hosted at the root of the
       // site using the default scope.
       navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
         console.log('Service worker registration succeeded:', registration);
+        
+        var serviceWorker;
+        if (registration.installing) {
+          serviceWorker = registration.installing;
+          console.log('Service Worker installing');
+        } else if (registration.waiting) {
+          serviceWorker = registration.waiting;
+          console.log('Service Worker waiting');
+          document.querySelector('#kind').textContent = 'waiting';
+        } else if (registration.active) {
+          serviceWorker = registration.active;
+          console.log('Service Worker active');
+        }
+
+        if (serviceWorker) {
+          logState(serviceWorker.state);
+          serviceWorker.addEventListener('statechange', function(e) {
+            logState(e.target.state);
+          });
+        }
+
       }).catch(function (error) {
         console.log('Service worker registration failed:', error);
       });

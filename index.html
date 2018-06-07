@@ -7,7 +7,8 @@
   <meta name="theme-color" content="#2196F3">
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="css/fontawesome-all.min.css">
   <link rel="stylesheet" href="css/styles.css">
   <title>Restaurant Reviews</title>
 </head>
@@ -56,12 +57,13 @@
     <a href="/">
       <strong>Restaurant Reviews</strong>
     </a> All Rights Reserved.
-    <div style="font-size: 24px; line-height: 1.5em;">
-      <i class="fa fa-star" aria-hidden="true"></i><span class="sr-only">Example of star</span> fa-star
-    </div>
   </footer>
 
   <script>
+
+    function logState(state) {
+      console.log(state);
+    }
     /**
      * Register Service Worker
      */
@@ -70,6 +72,27 @@
       // site using the default scope.
       navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
         console.log('Service worker registration succeeded:', registration);
+        
+        var serviceWorker;
+        if (registration.installing) {
+          serviceWorker = registration.installing;
+          console.log('Service Worker installing');
+        } else if (registration.waiting) {
+          serviceWorker = registration.waiting;
+          console.log('Service Worker waiting');
+          document.querySelector('#kind').textContent = 'waiting';
+        } else if (registration.active) {
+          serviceWorker = registration.active;
+          console.log('Service Worker active');
+        }
+
+        if (serviceWorker) {
+          logState(serviceWorker.state);
+          serviceWorker.addEventListener('statechange', function(e) {
+            logState(e.target.state);
+          });
+        }
+
       }).catch(function (error) {
         console.log('Service worker registration failed:', error);
       });

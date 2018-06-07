@@ -92,8 +92,6 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  //fillReviewsHTML();
 }
 
 /**

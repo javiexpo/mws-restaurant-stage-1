@@ -22,7 +22,7 @@ class DBHelper {
     return `http://localhost:${port}/reviews`;
   }
 
-  static get IDB_DATABASE_VERSION() { return 2; }
+  static get IDB_DATABASE_VERSION() { return 1; }
   static get IDB_DATABASE_NAME() { return 'rest-info-db'; }
   static get IDB_STORE_REST_INFO() { return 'rest-info'; }
   static get IDB_STORE_REST_REVIEW() { return 'rest-review'; }
@@ -120,20 +120,6 @@ class DBHelper {
   static fetchRestaurantById(id, callback) {
     // fetch restaurant by Id from IndexDb if is not then fetch from remote server
     DBHelper.fetchRestaurantsByIDFromIDB(id, callback);
-    
-    // fetch all restaurants with proper error handling.
-    /*DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        const restaurant = restaurants.find(r => r.id == id);
-        if (restaurant) { // Got the restaurant
-          callback(null, restaurant);
-        } else { // Restaurant does not exist in the database
-          callback('Restaurant does not exist', null);
-        }
-      }
-    });*/
   }
 
   static fetchRestaurantsByIDFromIDB(id, callback) {
@@ -196,8 +182,32 @@ class DBHelper {
         callback(null, restaurant);
         return tx.complete; 
       }).then(function(restaurant){
-          console.log('toggleRestaurantFavoriteById');
+          console.log('fetchPUTFavoriteRestaurant');
       });
+
+      this.fetchPUTFavoriteRestaurant(restaurant);
+    });
+  }
+
+  static fetchPUTFavoriteRestaurant(rest){
+    var request = new Request(`${DBHelper.REMOTE_RESTAURANTS_URL}/${rest.id}/?is_favorite=${rest.is_favorite}`, {
+	    method: 'PUT', 
+	    mode: 'cors'
+    });
+
+    // headers: new Headers({
+    //   'Content-Type': 'text/plain'
+    // })
+
+    fetch(request).then(function(responseObj) { 
+      if (responseObj.ok) {
+        console.log('fetchPUTFavoriteRestaurant succceed');
+      } else {
+        return responseObj.error;
+      }
+    }).then(function(error){
+      if(error)
+        console.log(error);
     });
   }
 
