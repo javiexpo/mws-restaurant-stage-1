@@ -122,14 +122,14 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h4');
-  title.innerHTML = 'Reviews';
-  title.setAttribute('tabindex', 0);
-  container.appendChild(title);
+  // const title = document.createElement('h4');
+  // title.innerHTML = 'Reviews';
+  // title.setAttribute('tabindex', 0);
+  // container.appendChild(title);
 
   if (!reviews) {
     const noReviews = document.createElement('p');
-    noReviews.innerHTML = 'No reviews yet!';
+    noReviews.innerHTML = 'No reviews yet!... Do you want to be the first? :)';
     container.appendChild(noReviews);
     return;
   }
@@ -198,4 +198,23 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+/**
+ * Functions to handle POST Reviews
+ */
+const formReview = document.getElementById('review-form');
+formReview.addEventListener('submit', function(e){
+  console.log(e);
+  submitReview(e);
+  e.preventDefault();
+});
+
+submitReview = (event) => {
+  const userName = document.getElementById('userName').value;
+  const userRating = document.getElementById('userRating').value;
+  const userComments = document.getElementById('userComments').value;
+  console.log('submitReview userName', userName);
+  console.log('submitReview userRating', userRating);
+  console.log('submitReview userComments', userComments);
 }

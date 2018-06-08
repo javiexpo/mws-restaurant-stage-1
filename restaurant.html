@@ -48,15 +48,17 @@
     <!-- end restaurant -->
     <!-- Beginning reviews -->
     <section id="reviews-container" tabindex="-1">
+        <h4 tabindex="0">Reviews</h4>
         <ul id="reviews-list"></ul>
-        <form action="" method="post">
-          <label for="Name"> Name: </label>
-          <input type="text" name="Name" id="userName" placeholder="John Smith"><br>
-          <label for="Rating"> Rating: </label>
-          <input type="text" name="Rating" id="userRating" placeholder="I enjoy a lot the food on this restaurant."><br>
-          <label for="Comment">Comments:</label>
-          <input type="text" name="Comment" id="userComments" placeholder="I enjoy a lot the food on this restaurant."><br>
-          <input type="submit" value="Submit"/>
+        <form id="review-form" target="_self">
+          <h5 id="formTitle">Leave your comments here:</h5>
+          <label for="Name" id="nameLabel">Name:</label>
+          <input type="text" name="Name" id="userName" placeholder="John Smith" aria-labelledby="formTitle nameLabel" required><br>
+          <label for="Rating" id="ratingLabel">Rating:</label>
+          <input type="number" name="Rating" id="userRating" placeholder="Rate from 1 to 5" aria-labelledby="formTitle ratingLabel" min="1" max="5" maxlength="1" required><br>
+          <label for="Comment" id="commentLabel">Comments:</label>
+          <textarea type="textArea" rows="4" cols="50" name="Comment" id="userComments" placeholder="Leave your comments here." aria-labelledby="formTitle commentLabel" required></textarea><br>
+          <button aria-label="Submit review" type="submit" form="review-form" value="Submit">Submit</button>
         </form>
     </section>
     <!-- End reviews -->
