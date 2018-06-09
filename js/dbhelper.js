@@ -35,7 +35,8 @@ class DBHelper {
       });
       storeRestInfo.createIndex('by-name', 'name');
       let storeRestReview = upgradeDb.createObjectStore(DBHelper.IDB_STORE_REST_REVIEW, {
-        keyPath: 'id'
+        keyPath: 'id',
+        autoincrement: true
       });
     });
   }
@@ -385,6 +386,31 @@ class DBHelper {
       restaurantReviews.forEach(function(review){
         store.put(review);
       });
+    });
+  }
+
+  static saveReviewForRestaurantInIDB(review, callback) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let tx = db.transaction(DBHelper.IDB_STORE_REST_REVIEW,'readwrite');
+      let store = tx.objectStore(DBHelper.IDB_STORE_REST_REVIEW);
+      store.put(review);
+      callback(review);
+    });
+  }
+
+  static saveReviewForRestaurantInServer(review, callback) {
+    fetch(`${DBHelper.REMOTE_REVIEWS_URL}/`, {
+	    method: 'POST', 
+	    body: JSON.stringify(review),
+	    headers: new Headers({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+	    })
+    }).then(function(resp) {
+      return resp.json();
+    }).then(function(reviewWithId){
+      console.log('reviewWithId', reviewWithId);
+      DBHelper.saveReviewForRestaurantInIDB(reviewWithId,callback);
     });
   }
 

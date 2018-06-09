@@ -206,15 +206,24 @@ getParameterByName = (name, url) => {
 const formReview = document.getElementById('review-form');
 formReview.addEventListener('submit', function(e){
   console.log(e);
-  submitReview(e);
   e.preventDefault();
+  submitReview(e);
 });
 
 submitReview = (event) => {
   const userName = document.getElementById('userName').value;
   const userRating = document.getElementById('userRating').value;
   const userComments = document.getElementById('userComments').value;
-  console.log('submitReview userName', userName);
-  console.log('submitReview userRating', userRating);
-  console.log('submitReview userComments', userComments);
+  const reviewContent = {
+    "restaurant_id": parseInt(self.restaurant.id),
+    "name": userName,
+    "rating": parseInt(userRating),
+    "comments": userComments
+  };
+  
+  DBHelper.saveReviewForRestaurantInServer(reviewContent, function(reviewWithId){
+    console.log('saveReviewForRestaurantInServer');
+    const ul = document.getElementById('reviews-list');
+    ul.appendChild(createReviewHTML(reviewWithId));
+  }); 
 }
