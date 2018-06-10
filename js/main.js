@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchCuisines();
 });
 
+window.ononline = () => {
+  console.log('User went Online from main.js');
+  DBHelper.syncPendingReviewWithServer();
+}
 
 /**
  * Fetch all neighborhoods and set their HTML.

@@ -19,6 +19,17 @@ window.initMap = () => {
     }
   });
 }
+/**
+ * Handle  Online and Offline events
+ */
+window.ononline = () => {
+  console.log('User went Online from restaurant_info.js');
+  DBHelper.syncPendingReviewWithServer();
+}
+
+window.onoffline = () => {
+console.log('User went Offline');
+}
 
 /**
  * Get the viewport width
@@ -221,9 +232,15 @@ submitReview = (event) => {
     "comments": userComments
   };
   
-  DBHelper.saveReviewForRestaurantInServer(reviewContent, function(reviewWithId){
-    console.log('saveReviewForRestaurantInServer');
-    const ul = document.getElementById('reviews-list');
-    ul.appendChild(createReviewHTML(reviewWithId));
-  }); 
+  if (navigator.onLine) {
+    DBHelper.saveReviewForRestaurantInServer(reviewContent, appendReviewToList); 
+  } else {
+    DBHelper.savePendingReviewForRestaurantInIDB(reviewContent, appendReviewToList);
+  }
+}
+
+appendReviewToList = (review) => {
+  console.log('appendReviewToList');
+  const ul = document.getElementById('reviews-list');
+  ul.appendChild(createReviewHTML(review));
 }
