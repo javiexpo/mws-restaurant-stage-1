@@ -6,11 +6,53 @@ var markers = []
 
 let currentImgSize;
 
+var lastIndx = 2;
+
+const FAVORITE_ON = 'Marked as Favorite';
+const FAVORITE_OFF = 'No marked as Favorite';
+const REST_ID = 'rest-id';
+
+/**
+ * Intersection Observer for the list of restaurants
+ */
+
+const preloadImage = el => {  
+	const src = el.getAttribute('data-src');
+	if (!src) {
+		return;
+	}
+  el.src = src;
+  console.log(`Image from source: ${src} is visible!`);
+	el.removeAttribute('data-src');  
+};
+
+const io = new IntersectionObserver((entries, self) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      preloadImage(entry.target);
+      // Stop watching and load the image
+      self.unobserve(entry.target);
+    }
+  });
+});
+
 /**
  * Get the viewport width
  */
 getViewportWidth = () => Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 
+
+/**
+ * Adding CSS 
+ */
+addCss = (fileName) => {
+  var head = document.head;
+  var link = document.createElement("link");
+  link.type = "text/css";
+  link.rel = "stylesheet";
+  link.href = `css/${fileName}`;
+  head.appendChild(link);
+}
 
 /**
  * Get to know when the viewport size has change
@@ -32,10 +74,18 @@ window.onresize = () => {
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
+  addCss('fontawesome-all.min.css');
   fetchNeighborhoods();
   fetchCuisines();
 });
 
+/**
+ * Detect when the user come online in order to Sync Pending Reviews to server
+ */
+window.ononline = () => {
+  console.log('User went Online from main.js');
+  DBHelper.syncPendingReviewWithServer();
+}
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -155,9 +205,26 @@ resetRestaurants = (restaurants) => {
  */
 fillRestaurantsHTML = (restaurants = self.restaurants) => {
   const ul = document.getElementById('restaurants-list');
+
+  // var indx = 0;
+  // for (let i = 0; i < lastIndx; i++) {
+  //   const restaurant = restaurants[i];
+  //   var restElem = createRestaurantHTML(restaurant);
+  //   ul.append(restElem);
+  // }
+
+  //Create Sentinel Element to monitor on Intersection Observer
+  // const sentinelElement = createIOSentinelHTML();
+  // Observe for Sentinel Element
+  // io.observe(sentinelElement);
+  //Add Sentinel element at the end of the list
+  // ul.append(sentinelElement);
+
   restaurants.forEach(restaurant => {
-    ul.append(createRestaurantHTML(restaurant));
+    var restElem = createRestaurantHTML(restaurant);
+    ul.append(restElem);
   });
+  
   addMarkersToMap();
 }
 
@@ -177,8 +244,10 @@ createRestaurantHTML = (restaurant) => {
   }
   //imgUrl = imgUrl.replace(`.jpg`, `-${viewPortWidth}.jpg`);
   imgUrl = imgUrl.concat(`-${viewPortWidth}.jpg`);
-  image.src = imgUrl;
+  //image.src = imgUrl;
+  image.setAttribute('data-src', imgUrl);
   image.alt = `Image of ${restaurant.name} Restaurant`;
+  io.observe(image);
   li.append(image);
 
   const name = document.createElement('h3');
@@ -196,9 +265,53 @@ createRestaurantHTML = (restaurant) => {
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more)
+  li.append(more);
 
-  return li
+  const favorite = createFavoriteIconHtml(restaurant);
+  li.append(favorite);
+
+  return li;
+}
+
+/**
+ * Create Favorite HTML Icon
+ */
+createFavoriteIconHtml = (rest) => {
+  const favoriteDiv = document.createElement('div');
+  favoriteDiv.setAttribute('class', 'favorite');
+
+  const favorite =document.createElement('i');
+  favorite.setAttribute('aria-hidden', 'true');
+  favorite.setAttribute('tabindex', '0');
+  if (rest.is_favorite) {
+    favorite.setAttribute('class', 'fas fa-star');
+    favorite.setAttribute('aria-label', FAVORITE_ON);  
+  } else {
+    favorite.setAttribute('class', 'far fa-star');
+    favorite.setAttribute('aria-label', FAVORITE_OFF);
+  }
+  favorite.setAttribute(REST_ID, rest.id);
+  
+  favoriteDiv.appendChild(favorite);
+  favoriteDiv.addEventListener('click', toggleFavoriteRestaurant);
+  return favoriteDiv;
+}
+
+toggleFavoriteRestaurant = (event) => {
+  const restId = event.srcElement.getAttribute(REST_ID);
+  console.log('toggleFavorite for Restaurant id ', restId);
+
+  DBHelper.toggleRestaurantFavoriteById(restId, (error, restaurant) => {
+    if (restaurant) {
+      if(restaurant.is_favorite) {
+        event.srcElement.setAttribute('class', 'fas fa-star');
+        event.srcElement.setAttribute('aria-label', FAVORITE_ON);
+      } else {
+        event.srcElement.setAttribute('class', 'far fa-star');
+        event.srcElement.setAttribute('aria-label', FAVORITE_OFF);
+      }
+    }
+  });
 }
 
 /**
@@ -213,4 +326,12 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     });
     self.markers.push(marker);
   });
+}
+
+
+createIOSentinelHTML = (restaurant) => {
+  const li = document.createElement('li');
+  li.setAttribute('tabindex', -1);
+  li.setAttribute('id', 'sentinel');
+  return li;
 }

@@ -48,7 +48,18 @@
     <!-- end restaurant -->
     <!-- Beginning reviews -->
     <section id="reviews-container" tabindex="-1">
-      <ul id="reviews-list"></ul>
+        <h4 tabindex="0">Reviews</h4>
+        <ul id="reviews-list"></ul>
+        <form id="review-form" target="_self">
+          <h5 id="formTitle">Leave your comments here:</h5>
+          <label for="Name" id="nameLabel">Name:</label>
+          <input type="text" name="Name" id="userName" placeholder="John Smith" aria-labelledby="formTitle nameLabel" required><br>
+          <label for="Rating" id="ratingLabel">Rating:</label>
+          <input type="number" name="Rating" id="userRating" placeholder="Rate from 1 to 5" aria-labelledby="formTitle ratingLabel" min="1" max="5" maxlength="1" required><br>
+          <label for="Comment" id="commentLabel">Comments:</label>
+          <textarea type="textArea" rows="4" cols="50" name="Comment" id="userComments" placeholder="Leave your comments here." aria-labelledby="formTitle commentLabel" required></textarea><br>
+          <button aria-label="Submit review" type="submit" form="review-form" value="Submit">Submit</button>
+        </form>
     </section>
     <!-- End reviews -->
   </main>
@@ -67,18 +78,43 @@
   <!-- Main javascript file -->
   <script type="text/javascript" src="js/restaurant_info.js"></script>
   <!-- Google Maps -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsyKYFOJ4YZvsrSRHNfTt_ADm3U6KNe14&libraries=places&callback=initMap"></script>
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsyKYFOJ4YZvsrSRHNfTt_ADm3U6KNe14&libraries=places&callback=initMap"></script> -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAl2jGZ4QNmHjzVcNazbqVB5kTOlpvzSmc&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
 
   <script>
+    function logState(state) {
+      console.log(state);
+    }
     /**
      * Register Service Worker
      */
-    if ('serviceWorker' in navigator) {
+     if ('serviceWorker' in navigator) {
       // Register a service worker hosted at the root of the
       // site using the default scope.
       navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
         console.log('Service worker registration succeeded:', registration);
+        
+        var serviceWorker;
+        if (registration.installing) {
+          serviceWorker = registration.installing;
+          console.log('Service Worker installing');
+        } else if (registration.waiting) {
+          serviceWorker = registration.waiting;
+          console.log('Service Worker waiting');
+          document.querySelector('#kind').textContent = 'waiting';
+        } else if (registration.active) {
+          serviceWorker = registration.active;
+          console.log('Service Worker active');
+        }
+
+        if (serviceWorker) {
+          logState(serviceWorker.state);
+          serviceWorker.addEventListener('statechange', function(e) {
+            logState(e.target.state);
+          });
+        }
+
       }).catch(function (error) {
         console.log('Service worker registration failed:', error);
       });

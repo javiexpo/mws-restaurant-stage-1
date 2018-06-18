@@ -3,14 +3,27 @@ var CACHE_VERSION = 1;
 // Shorthand identifier mapped to specific versioned cache.
 var CURRENT_CACHES = `cache-resources-v${CACHE_VERSION}`;
 
+//
 const resourcesList = [
     './',
-    './index.html', 
+    './index.html',
+    './index.html?launcher=true', 
     './js/main.js',
     './js/dbhelper.js',
     './js/restaurant_info.js',
     './data/restaurants.json',
     './css/styles.css',
+    './css/fontawesome-all.min.css',
+    './webfonts/fa-regular-400.eot',
+    './webfonts/fa-regular-400.svg',
+    './webfonts/fa-regular-400.ttf',
+    './webfonts/fa-regular-400.woff',
+    './webfonts/fa-regular-400.woff2',
+    './webfonts/fa-solid-900.eot',
+    './webfonts/fa-solid-900.svg',
+    './webfonts/fa-solid-900.ttf',
+    './webfonts/fa-solid-900.woff',
+    './webfonts/fa-solid-900.woff2',
     './restaurant.html',
     './img/1-360.jpg',
     './img/2-360.jpg',

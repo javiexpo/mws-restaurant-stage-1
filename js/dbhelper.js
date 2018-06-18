@@ -12,22 +12,36 @@ class DBHelper {
     return `http://localhost:${port}/data/restaurants.json`;
   }
 
-  static get REMOTE_SERVER_URL() {
+  static get REMOTE_RESTAURANTS_URL() {
     const port = 1337 // Change this to your server port
     return `http://localhost:${port}/restaurants`;
   }
 
+  static get REMOTE_REVIEWS_URL() {
+    const port = 1337 // Change this to your server port
+    return `http://localhost:${port}/reviews`;
+  }
+
   static get IDB_DATABASE_VERSION() { return 1; }
   static get IDB_DATABASE_NAME() { return 'rest-info-db'; }
-  static get IDB_STORE_NAME() { return 'rest-info'; }
+  static get IDB_STORE_REST_INFO() { return 'rest-info'; }
+  static get IDB_STORE_REST_REVIEW() { return 'rest-review'; }
+  static get IDB_STORE_REST_REVIEW_PENDING() { return 'rest-review-pending'; }
   
   static get IDB_PROMISE() {
     //Constructor and Getter for the IndexDB promise
     return idb.open(DBHelper.IDB_DATABASE_NAME,DBHelper.IDB_DATABASE_VERSION,function(upgradeDb){
-      let store = upgradeDb.createObjectStore(DBHelper.IDB_STORE_NAME, {
+      let storeRestInfo = upgradeDb.createObjectStore(DBHelper.IDB_STORE_REST_INFO, {
         keyPath: 'id'
       });
-      store.createIndex('by-name', 'name');
+      storeRestInfo.createIndex('by-name', 'name');
+      let storeRestReview = upgradeDb.createObjectStore(DBHelper.IDB_STORE_REST_REVIEW, {
+        keyPath: 'id'
+      });
+      let storeRestReviewPending = upgradeDb.createObjectStore(DBHelper.IDB_STORE_REST_REVIEW_PENDING, {
+        keyPath: 'id',
+        autoincrement: true
+      });
     });
   }
 
@@ -36,39 +50,12 @@ class DBHelper {
    */
   static fetchRestaurants(callback) {
     DBHelper.fetchRestaurantsFromIDB(callback);
-    /* fetch(DBHelper.REMOTE_SERVER_URL).then(function(response) {
-      if(response.ok) {
-        return response.json();
-      } else {
-        callback('Restaurants not found', null);
-      }
-    }).then(function(restaurants) {
-      DBHelper.saveRestaurantsInIDB(restaurants);
-      callback(null, restaurants);
-    }).catch(function(error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
-      callback(error.message, null);
-    }); */
-
-    /*let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();*/
   }
 
   static saveRestaurantsInIDB(restaurants) {
     DBHelper.IDB_PROMISE.then(function(db){
-      let tx = db.transaction(DBHelper.IDB_STORE_NAME,'readwrite');
-      let store = tx.objectStore(DBHelper.IDB_STORE_NAME);
+      let tx = db.transaction(DBHelper.IDB_STORE_REST_INFO,'readwrite');
+      let store = tx.objectStore(DBHelper.IDB_STORE_REST_INFO);
       restaurants.forEach(function(rest){
         store.put(rest);
       });
@@ -77,8 +64,8 @@ class DBHelper {
 
   static fetchRestaurantsFromIDB(callback) {
     DBHelper.IDB_PROMISE.then(function(db){
-      let indexStore = db.transaction(DBHelper.IDB_STORE_NAME)
-                          .objectStore(DBHelper.IDB_STORE_NAME)
+      let indexStore = db.transaction(DBHelper.IDB_STORE_REST_INFO)
+                          .objectStore(DBHelper.IDB_STORE_REST_INFO)
                           .index('by-name');
       indexStore.getAll().then(function(restaurants){
         if(restaurants && restaurants.length > 0)
@@ -90,7 +77,7 @@ class DBHelper {
   }
 
   static fetchRestaurantsFromServer(callback) {
-    fetch(DBHelper.REMOTE_SERVER_URL).then(function(response) {
+    fetch(DBHelper.REMOTE_RESTAURANTS_URL).then(function(response) {
       if(response.ok) {
         return response.json();
       } else {
@@ -111,26 +98,12 @@ class DBHelper {
   static fetchRestaurantById(id, callback) {
     // fetch restaurant by Id from IndexDb if is not then fetch from remote server
     DBHelper.fetchRestaurantsByIDFromIDB(id, callback);
-    
-    // fetch all restaurants with proper error handling.
-    /*DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        const restaurant = restaurants.find(r => r.id == id);
-        if (restaurant) { // Got the restaurant
-          callback(null, restaurant);
-        } else { // Restaurant does not exist in the database
-          callback('Restaurant does not exist', null);
-        }
-      }
-    });*/
   }
 
   static fetchRestaurantsByIDFromIDB(id, callback) {
     DBHelper.IDB_PROMISE.then(function(db){
-      let store = db.transaction(DBHelper.IDB_STORE_NAME)
-                          .objectStore(DBHelper.IDB_STORE_NAME);
+      let store = db.transaction(DBHelper.IDB_STORE_REST_INFO)
+                          .objectStore(DBHelper.IDB_STORE_REST_INFO);
       store.getAll().then(function(restaurants){
         if(restaurants && restaurants.length > 0) {
           let restaurant;
@@ -150,7 +123,7 @@ class DBHelper {
   }
 
   static fetchRestaurantsByIDFromServer(id, callback) {
-    fetch(`${DBHelper.REMOTE_SERVER_URL}/${id}`).then(function(response) {
+    fetch(`${DBHelper.REMOTE_RESTAURANTS_URL}/${id}`).then(function(response) {
       if(response.ok) {
         return response.json();
       } else {
@@ -161,6 +134,58 @@ class DBHelper {
     }).catch(function(error) {
       console.log('There has been a problem with your fetch operation: ' + error.message);
       callback('Sorry there has been a problem, please try again later', null);
+    });
+  }
+
+
+  static toggleRestaurantFavoriteById(id, callback) {
+    // fetch restaurant by Id from IndexDb if is not then fetch from remote server
+    DBHelper.fetchRestaurantsByIDFromIDB(id, (error, restaurant) => {
+      if (!restaurant) {
+        console.error(error);
+        callback(error, null);
+        return;
+      }
+
+      if (restaurant.is_favorite) {
+        restaurant.is_favorite = false;
+      } else {
+        restaurant.is_favorite = true;
+      }
+
+      DBHelper.IDB_PROMISE.then(function(db){
+        let tx = db.transaction(DBHelper.IDB_STORE_REST_INFO,'readwrite');
+        let store = tx.objectStore(DBHelper.IDB_STORE_REST_INFO);
+        store.put(restaurant);
+        callback(null, restaurant);
+        return tx.complete; 
+      }).then(function(restaurant){
+          console.log('fetchPUTFavoriteRestaurant');
+      });
+
+      this.fetchPUTFavoriteRestaurant(restaurant);
+    });
+  }
+
+  static fetchPUTFavoriteRestaurant(rest){
+    var request = new Request(`${DBHelper.REMOTE_RESTAURANTS_URL}/${rest.id}/?is_favorite=${rest.is_favorite}`, {
+	    method: 'PUT', 
+	    mode: 'cors'
+    });
+
+    // headers: new Headers({
+    //   'Content-Type': 'text/plain'
+    // })
+
+    fetch(request).then(function(responseObj) { 
+      if (responseObj.ok) {
+        console.log('fetchPUTFavoriteRestaurant succceed');
+      } else {
+        return responseObj.error;
+      }
+    }).then(function(error){
+      if(error)
+        console.log(error);
     });
   }
 
@@ -268,6 +293,13 @@ class DBHelper {
   }
 
   /**
+   * Favorite Restaurant URL.
+   */
+  static urlForFavoriteRestaurant(restaurant) {
+    return (`./restaurant.html?id=${restaurant.id}`);
+  }
+
+  /**
    * Map marker for a restaurant.
    */
   static mapMarkerForRestaurant(restaurant, map) {
@@ -279,6 +311,128 @@ class DBHelper {
       animation: google.maps.Animation.DROP}
     );
     return marker;
+  }
+
+  static fetchRestaurantReviewsById(id, callback) {
+    // fetch restaurant by Id from IndexDb if is not then fetch from remote server
+    DBHelper.fetchRestaurantReviewsByIDFromIDB(id, callback);
+  }
+
+  static fetchRestaurantReviewsByIDFromIDB(id, callback) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let store = db.transaction(DBHelper.IDB_STORE_REST_REVIEW)
+                          .objectStore(DBHelper.IDB_STORE_REST_REVIEW);
+      store.getAll().then(function(reviews){
+        if(reviews && reviews.length > 0) {
+          let restReviews = [];
+          reviews.forEach(function(rev){
+            if (rev.restaurant_id == id)
+              restReviews.push(rev);
+          })
+          if(restReviews.length > 0)
+            callback(null, restReviews);
+          else
+            DBHelper.fetchRestaurantReviewsByIDFromServer(id,callback);  
+        } else {
+          DBHelper.fetchRestaurantReviewsByIDFromServer(id,callback);
+        }
+      });
+    });
+  }
+
+  static fetchRestaurantReviewsByIDFromServer(id, callback) {
+    fetch(`${DBHelper.REMOTE_REVIEWS_URL}/?restaurant_id=${id}`).then(function(response) {
+      if(response.ok) {
+        return response.json();
+      } else {
+        callback('No reviews yet!', null);
+      }
+    }).then(function(restaurantReviews) {
+      DBHelper.saveRestaurantReviewsInIDB(restaurantReviews);
+      callback(null, restaurantReviews);
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      callback('Sorry there has been a problem, please try again later', null);
+    });
+  }
+
+  static saveRestaurantReviewsInIDB(restaurantReviews) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let tx = db.transaction(DBHelper.IDB_STORE_REST_REVIEW,'readwrite');
+      let store = tx.objectStore(DBHelper.IDB_STORE_REST_REVIEW);
+      restaurantReviews.forEach(function(review){
+        store.put(review);
+      });
+    });
+  }
+
+  static savePendingReviewForRestaurantInIDB(review, callback) {
+    review.id = 0;
+    DBHelper.IDB_PROMISE.then(function(db){
+      let tx = db.transaction(DBHelper.IDB_STORE_REST_REVIEW_PENDING,'readwrite');
+      let store = tx.objectStore(DBHelper.IDB_STORE_REST_REVIEW_PENDING);
+      store.put(review);
+      callback(review);
+    });
+  }
+
+  static syncPendingReviewWithServer() {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let store = db.transaction(DBHelper.IDB_STORE_REST_REVIEW_PENDING)
+                          .objectStore(DBHelper.IDB_STORE_REST_REVIEW_PENDING);
+      store.getAll().then(function(pendingReviews){
+        if(pendingReviews && pendingReviews.length > 0) {
+          pendingReviews.forEach(function(pendingReview){
+            const reviewContent = {
+              "restaurant_id": pendingReview.restaurant_id,
+              "name": pendingReview.name,
+              "rating": pendingReview.rating,
+              "comments": pendingReview.comments
+            };
+            DBHelper.saveReviewForRestaurantInServer(reviewContent, function(review){
+              if(review && review.id != 0) {
+                //Delete record from Pending Review Table
+                DBHelper.deletePendingReviewInIDB(pendingReview);
+              }
+            });
+          });
+        }
+      });
+    });
+  }
+
+  static deletePendingReviewInIDB(pendingReview) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let tx = db.transaction(DBHelper.IDB_STORE_REST_REVIEW_PENDING,'readwrite');
+      let store = tx.objectStore(DBHelper.IDB_STORE_REST_REVIEW_PENDING);
+      store.delete(pendingReview.id);
+    });
+  }
+
+  static saveReviewForRestaurantInIDB(review, callback) {
+    DBHelper.IDB_PROMISE.then(function(db){
+      let tx = db.transaction(DBHelper.IDB_STORE_REST_REVIEW,'readwrite');
+      let store = tx.objectStore(DBHelper.IDB_STORE_REST_REVIEW);
+      store.put(review);
+      if (callback)
+        callback(review);
+    });
+  }
+
+  static saveReviewForRestaurantInServer(review, callback) {
+    fetch(`${DBHelper.REMOTE_REVIEWS_URL}/`, {
+	    method: 'POST', 
+	    body: JSON.stringify(review),
+	    headers: new Headers({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+	    })
+    }).then(function(resp) {
+      return resp.json();
+    }).then(function(reviewWithId){
+      console.log('reviewWithId', reviewWithId);
+      DBHelper.saveReviewForRestaurantInIDB(reviewWithId,callback);
+    });
   }
 
 }

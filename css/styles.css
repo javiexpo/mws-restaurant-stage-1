@@ -67,10 +67,6 @@ h1, h2, h3, h4, h5, h6 {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0 0 20px;
 }
-/* article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
-	display: block; 
-}*/ 
-
 
 /* ====================== Navigation ====================== */
 nav {
@@ -91,15 +87,6 @@ nav h1 a {
   text-transform: uppercase;
   max-height: 100%;
 }
-
-/* #breadcrumb {
-    padding: 10px 40px 16px;
-    list-style: none;
-    background-color: #eee;
-    font-size: 17px;
-    margin: 0;
-    max-width: 100%;
-} */
 
 .breadcrumb {
   padding: 5px 40px 8px;
@@ -127,12 +114,6 @@ nav h1 a {
   height: .8em;
   content: '';
 }
-
-/* .breadcrumb li + li::before {
-  padding: 8px;
-  color: black;
-  content: "/\00a0";
-} */
 
 .breadcrumb [aria-current="page"] {
   color:#000;
@@ -247,6 +228,26 @@ nav h1 a {
   text-transform: uppercase;
 }
 
+#restaurants-list li .favorite {
+  font-size:3em; 
+  display: block;
+  padding-left: 80%;
+  width: 48px;
+  height: 48px;
+  color: var(--detail-btn-color);
+}
+
+#sentinel {
+  background-color: #fff;
+  border: 2px solid #ccc;
+  font-family: Arial,sans-serif;
+  margin: 15px;
+  min-height: 10px;
+  padding: 10px 30px 25px;
+  text-align: left;
+  max-width: 100%;
+}
+
 @media screen and (min-width: 400px ){
   #restaurants-list .restaurant-img {
     min-height: 248px;
@@ -316,8 +317,9 @@ nav h1 a {
   #restaurants-list li a {
     font-size: 8pt;
   }
-
 }
+
+
 /* ====================== Restaurant Details ====================== */
 body.inside {
   max-width: 100%;
@@ -408,6 +410,55 @@ body.inside {
   padding-bottom: 1pt;
 }
 
+#review-form {
+  background-color: #fff;
+  border: 2px solid #f3f3f3;
+  max-width: 100%;
+  border-radius: 20px;
+  margin: 0 0 30px;
+  overflow: hidden;
+  padding: 0 20px 20px;
+  grid-template-columns: 1fr 1fr;
+}
+
+#review-form h5{
+  width: 100%;
+  font-size: 1em;
+  grid-column: 1/3;
+}
+
+#review-form label{
+  width: 100%;
+  font-size: 1em;
+  grid-column: 1/3;
+}
+
+#review-form input{
+  width: 100%;
+  height: 48px;
+  border: 0;
+  font-size: 1em;
+  grid-column: 1/3;
+}
+
+#review-form textarea{
+  width: 100%;
+  font-size: 1em;
+  grid-column: 1/3;
+}
+
+#review-form button{
+  width: 100%;
+  height: 48px;
+  background-color: var(--detail-btn-color);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 1.2em;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column: 1/3;
+}
+
 #reviews-list {
   margin: 0;
   padding: 0;
@@ -482,6 +533,17 @@ body.inside {
     font-size: 0.8em;
   }
 
+  #review-form h5,
+  #review-form label,
+  #review-form input,
+  #review-form textarea{
+    font-size: 0.6em;
+  }
+
+  #review-form button {
+    font-size: 0.6em;
+  }
+
 }
 
 /* @media screen and ( min-width: 1025px ) {
@@ -489,7 +551,6 @@ body.inside {
     max-width: 100%;
   }
 } */
-
 
 .skip-link,
 .skip-link-rest {

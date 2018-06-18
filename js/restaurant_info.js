@@ -19,6 +19,17 @@ window.initMap = () => {
     }
   });
 }
+/**
+ * Handle  Online and Offline events
+ */
+window.ononline = () => {
+  console.log('User went Online from restaurant_info.js');
+  DBHelper.syncPendingReviewWithServer();
+}
+
+window.onoffline = () => {
+console.log('User went Offline');
+}
 
 /**
  * Get the viewport width
@@ -45,7 +56,16 @@ fetchRestaurantFromURL = (callback) => {
         return;
       }
       fillRestaurantHTML();
-      callback(null, restaurant)
+
+      DBHelper.fetchRestaurantReviewsById(id, (error, reviews) => {
+        self.restaurant.reviews = reviews;
+        if (!reviews) {
+          console.error(error);
+          callback(null, self.restaurant);
+        }
+        fillReviewsHTML();
+        callback(null, self.restaurant);
+      });
     });
   }
 }
@@ -83,8 +103,6 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  fillReviewsHTML();
 }
 
 /**
@@ -115,14 +133,14 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h4');
-  title.innerHTML = 'Reviews';
-  title.setAttribute('tabindex', 0);
-  container.appendChild(title);
+  // const title = document.createElement('h4');
+  // title.innerHTML = 'Reviews';
+  // title.setAttribute('tabindex', 0);
+  // container.appendChild(title);
 
   if (!reviews) {
     const noReviews = document.createElement('p');
-    noReviews.innerHTML = 'No reviews yet!';
+    noReviews.innerHTML = 'No reviews yet!... Do you want to be the first? :)';
     container.appendChild(noReviews);
     return;
   }
@@ -145,10 +163,11 @@ createReviewHTML = (review) => {
   name.setAttribute('class', 'reviewListName');
   li.appendChild(name);
 
+  const reviewDate = new Date(review.updatedAt);
   const date = document.createElement('p');
-  date.setAttribute('aria-label', `Review date ${review.date}`);
+  date.setAttribute('aria-label', `Review date ${reviewDate.toDateString()}`);
   date.setAttribute('class', 'reviewListDate');
-  date.innerHTML = review.date;
+  date.innerHTML = reviewDate.toDateString();
   li.appendChild(date);
 
   const rating = document.createElement('p');
@@ -190,4 +209,38 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+/**
+ * Functions to handle POST Reviews
+ */
+const formReview = document.getElementById('review-form');
+formReview.addEventListener('submit', function(e){
+  console.log(e);
+  e.preventDefault();
+  submitReview(e);
+});
+
+submitReview = (event) => {
+  const userName = document.getElementById('userName').value;
+  const userRating = document.getElementById('userRating').value;
+  const userComments = document.getElementById('userComments').value;
+  const reviewContent = {
+    "restaurant_id": parseInt(self.restaurant.id),
+    "name": userName,
+    "rating": parseInt(userRating),
+    "comments": userComments
+  };
+  
+  if (navigator.onLine) {
+    DBHelper.saveReviewForRestaurantInServer(reviewContent, appendReviewToList); 
+  } else {
+    DBHelper.savePendingReviewForRestaurantInIDB(reviewContent, appendReviewToList);
+  }
+}
+
+appendReviewToList = (review) => {
+  console.log('appendReviewToList');
+  const ul = document.getElementById('reviews-list');
+  ul.appendChild(createReviewHTML(review));
 }
