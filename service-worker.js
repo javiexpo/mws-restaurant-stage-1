@@ -3,6 +3,7 @@ var CACHE_VERSION = 1;
 // Shorthand identifier mapped to specific versioned cache.
 var CURRENT_CACHES = `cache-resources-v${CACHE_VERSION}`;
 
+//
 const resourcesList = [
     './',
     './index.html',

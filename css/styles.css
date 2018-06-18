@@ -67,10 +67,6 @@ h1, h2, h3, h4, h5, h6 {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0 0 20px;
 }
-/* article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
-	display: block; 
-}*/ 
-
 
 /* ====================== Navigation ====================== */
 nav {
@@ -91,15 +87,6 @@ nav h1 a {
   text-transform: uppercase;
   max-height: 100%;
 }
-
-/* #breadcrumb {
-    padding: 10px 40px 16px;
-    list-style: none;
-    background-color: #eee;
-    font-size: 17px;
-    margin: 0;
-    max-width: 100%;
-} */
 
 .breadcrumb {
   padding: 5px 40px 8px;
@@ -127,12 +114,6 @@ nav h1 a {
   height: .8em;
   content: '';
 }
-
-/* .breadcrumb li + li::before {
-  padding: 8px;
-  color: black;
-  content: "/\00a0";
-} */
 
 .breadcrumb [aria-current="page"] {
   color:#000;
@@ -256,6 +237,17 @@ nav h1 a {
   color: var(--detail-btn-color);
 }
 
+#sentinel {
+  background-color: #fff;
+  border: 2px solid #ccc;
+  font-family: Arial,sans-serif;
+  margin: 15px;
+  min-height: 10px;
+  padding: 10px 30px 25px;
+  text-align: left;
+  max-width: 100%;
+}
+
 @media screen and (min-width: 400px ){
   #restaurants-list .restaurant-img {
     min-height: 248px;
@@ -326,8 +318,6 @@ nav h1 a {
     font-size: 8pt;
   }
 }
-
-
 
 
 /* ====================== Restaurant Details ====================== */
@@ -561,7 +551,6 @@ body.inside {
     max-width: 80%;
   }
 }
-
 
 .skip-link,
 .skip-link-rest {
