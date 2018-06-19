@@ -55,7 +55,7 @@
           <label for="Name" id="nameLabel">Name:</label>
           <input type="text" name="Name" id="userName" placeholder="John Smith" aria-labelledby="formTitle nameLabel" required><br>
           <label for="Rating" id="ratingLabel">Rating:</label>
-          <input type="number" name="Rating" id="userRating" placeholder="Rate from 1 to 5" aria-labelledby="formTitle ratingLabel" min="1" max="5" maxlength="1" required><br>
+          <input type="number" name="Rating" id="userRating" placeholder="Rate from 1 to 5" aria-labelledby="formTitle ratingLabel" min="1" max="5" step="1" maxlength="1" required><br>
           <label for="Comment" id="commentLabel">Comments:</label>
           <textarea type="textArea" rows="4" cols="50" name="Comment" id="userComments" placeholder="Leave your comments here." aria-labelledby="formTitle commentLabel" required></textarea><br>
           <button aria-label="Submit review" type="submit" form="review-form" value="Submit">Submit</button>

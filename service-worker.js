@@ -80,7 +80,8 @@ function precache() {
 function fromCache(request) {
   return caches.open(CURRENT_CACHES).then(function(cache) {
     return cache.match(request).then(function(matching) {
-        return matching || fetch(request);
+        var reqClone = request.clone();
+        return matching || fetch(reqClone);
       //return matching || Promise.reject('no-match');
     });
   });
