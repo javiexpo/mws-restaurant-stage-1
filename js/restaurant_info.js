@@ -216,7 +216,7 @@ getParameterByName = (name, url) => {
  */
 const formReview = document.getElementById('review-form');
 formReview.addEventListener('submit', function(e){
-  console.log(e);
+  //console.log(e);
   e.preventDefault();
   submitReview(e);
 });
@@ -240,7 +240,14 @@ submitReview = (event) => {
 }
 
 appendReviewToList = (review) => {
-  console.log('appendReviewToList');
+  //console.log('appendReviewToList');
   const ul = document.getElementById('reviews-list');
   ul.appendChild(createReviewHTML(review));
+  clearFormData();
+}
+
+clearFormData = () => {
+  document.getElementById('userName').value = '';
+  document.getElementById('userRating').value = '';
+  document.getElementById('userComments').value = '';
 }
