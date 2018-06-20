@@ -53,7 +53,9 @@ self.addEventListener('install', function(evt) {
 
 self.addEventListener('fetch', function(evt) {
     evt.respondWith(fromCache(evt.request));
-    evt.waitUntil(update(evt.request));
+    if (evt.request.method != 'POST') {
+      evt.waitUntil(update(evt.request));
+    }
 });
 
 self.addEventListener('activate', function(event) {
@@ -78,19 +80,23 @@ function precache() {
 }
 
 function fromCache(request) {
-  return caches.open(CURRENT_CACHES).then(function(cache) {
-    return cache.match(request).then(function(matching) {
-        var reqClone = request.clone();
-        return matching || fetch(reqClone);
-      //return matching || Promise.reject('no-match');
+  if (request.method == 'POST') {
+    return fetch(request);
+  } else {
+    return caches.open(CURRENT_CACHES).then(function(cache) {
+      return cache.match(request).then(function(matching) {
+        return matching || fetch(request);
+      });
     });
-  });
+  }
 }
 
 function update(request) {
     return caches.open(CURRENT_CACHES).then(function (cache) {
       return fetch(request).then(function (response) {
-        return cache.put(request, response);
+        if (request.method != 'POST') {
+          return cache.put(request, response);
+        }
       });
     });
 }
